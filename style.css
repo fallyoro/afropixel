@@ -1,0 +1,304 @@
+:root {
+  --or: #a67c2e;
+  --texte: #1a1a1a;
+  --fond: #ffffff;
+  --gris: #888;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 12px;
+  background: var(--fond);
+  color: var(--texte);
+  font-family: "Times New Roman";
+}
+
+.entete {
+  position: relative;
+  text-align: center;
+  padding: 24px 90px 18px;
+}
+
+.entete h1,
+.entete h2 {
+  font-family: "Times New Roman";
+  font-weight: 600;
+  color: var(--or);
+  margin: 0;
+  text-transform: uppercase;
+}
+
+.entete h1 {
+  font-size: 2.6rem;
+  letter-spacing: 1px;
+}
+
+.entete h2 {
+  font-size: 2.1rem;
+  margin-top: 28px;
+  font-weight: 500;
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid var(--gris);
+  margin: 0 0 12px;
+}
+
+hr:first-of-type {
+  margin-top: 12px;
+}
+
+.btn-panier {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  background: none;
+  border: 0;
+  padding: 0;
+  cursor: pointer;
+}
+
+.compteur {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 6px;
+  border-radius: 12px;
+  background: #d63a3a;
+  color: #fff;
+  font: 600 0.85rem/24px "Oswald", sans-serif;
+  text-align: center;
+}
+
+.grille {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 20px;
+  max-width: 1540px;
+  margin: 24px auto;
+  padding: 0 12px;
+}
+
+.carte {
+  border: 3px solid var(--or);
+  border-radius: 40px;
+  padding: 32px 32px 18px;
+  text-align: center;
+  background: #fff;
+}
+
+.carte img {
+  display: block;
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 40px;
+  box-shadow: 6px 8px 8px rgba(0, 0, 0, 0.55);
+  margin-bottom: 30px;
+  background: #eee;
+}
+
+.carte .nom,
+.carte .prix {
+  margin: 0 0 8px;
+  font-size: 1.35rem;
+}
+
+.controles {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.controles button {
+  width: 26px;
+  height: 30px;
+  border: 1px solid #767676;
+  border-radius: 4px;
+  background: #efefef;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.controles button:hover {
+  background: #e2e2e2;
+}
+
+.controles button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+.controles button:focus-visible,
+.btn-panier:focus-visible,
+.fermer:focus-visible,
+.btn-action:focus-visible {
+  outline: 3px solid var(--or);
+  outline-offset: 2px;
+}
+
+.quantite {
+  min-width: 22px;
+  font-weight: 600;
+}
+
+/* ---------- Panneau panier ---------- */
+.fond {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 10;
+}
+
+.panier {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: min(420px, 100%);
+  background: #fff;
+  border-left: 3px solid var(--or);
+  z-index: 11;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(100%);
+  transition: transform 0.25s ease;
+}
+
+.panier.ouvert {
+  transform: translateX(0);
+}
+
+.panier-tete {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  border-bottom: 1px solid #ddd;
+}
+
+.panier-tete h3 {
+  margin: 0;
+  font: 600 1.6rem "Oswald", sans-serif;
+  color: var(--or);
+}
+
+.fermer {
+  background: none;
+  border: 0;
+  font-size: 2rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.panier-liste {
+  list-style: none;
+  margin: 0;
+  padding: 0 20px;
+  flex: 1;
+  overflow-y: auto;
+}
+
+.panier-liste li {
+  display: grid;
+  grid-template-columns: 56px 1fr auto;
+  gap: 12px;
+  align-items: center;
+  padding: 12px 0;
+  border-bottom: 1px solid #eee;
+}
+
+.panier-liste img {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+
+.panier-liste .infos small {
+  color: var(--gris);
+  display: block;
+}
+
+.panier-vide {
+  padding: 24px 0;
+  color: var(--gris);
+}
+
+.panier-pied {
+  padding: 16px 20px 20px;
+  border-top: 1px solid #ddd;
+  display: grid;
+  gap: 10px;
+}
+
+.total {
+  margin: 0;
+  font-size: 1.3rem;
+}
+
+.btn-action {
+  padding: 12px;
+  border: 2px solid var(--or);
+  border-radius: 12px;
+  background: var(--or);
+  color: #fff;
+  font: 500 1.05rem "Oswald", sans-serif;
+  cursor: pointer;
+}
+
+.btn-secondaire {
+  background: #fff;
+  color: var(--or);
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 1200px) {
+  .grille {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 880px) {
+  .grille {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 560px) {
+  .grille {
+    grid-template-columns: 1fr;
+  }
+
+  .entete {
+    padding: 20px 70px 14px 12px;
+  }
+
+  .entete h1 {
+    font-size: 2rem;
+  }
+
+  .entete h2 {
+    font-size: 1.3rem;
+    margin-top: 14px;
+  }
+
+  .btn-panier svg {
+    width: 48px;
+    height: 48px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .panier {
+    transition: none;
+  }
+}
