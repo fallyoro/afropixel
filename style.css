@@ -260,45 +260,21 @@ hr:first-of-type {
   color: var(--or);
 }
 
-/* ---------- Responsive ---------- */
-@media (max-width: 1200px) {
-  .grille {
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-  }
+
+.entete {
+  padding: 20px 70px 14px 12px;
 }
 
-@media (max-width: 880px) {
-  .grille {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+.entete h1 {
+  font-size: 2rem;
 }
 
-@media (max-width: 560px) {
-  .grille {
-    grid-template-columns: 1fr;
-  }
-
-  .entete {
-    padding: 20px 70px 14px 12px;
-  }
-
-  .entete h1 {
-    font-size: 2rem;
-  }
-
-  .entete h2 {
-    font-size: 1.3rem;
-    margin-top: 14px;
-  }
-
-  .btn-panier svg {
-    width: 48px;
-    height: 48px;
-  }
+.entete h2 {
+  font-size: 1.3rem;
+  margin-top: 14px;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .panier {
-    transition: none;
-  }
+.btn-panier svg {
+  width: 48px;
+  height: 48px;
 }

@@ -1,97 +1,111 @@
 const CLE_STOCKAGE = "afropixel-panier";
 
-const catalogue = document.getElementById("catalogue");
+class ImageCard {
+  constructor(id, title, price, url) {
+    this.id = id;
+    this.title = title;
+    this.price = price;
+    this.url = url;
+  }
 
-let produits = [];
-let quantites = chargerPanier();
-
-function chargerPanier() {
-  try {
-    return JSON.parse(localStorage.getItem(CLE_STOCKAGE)) || {};
-  } catch {
-    return {};
+  render() {
+    return `
+      <article class="carte" data-id="${this.id}">
+        <img src="${this.url}" alt="${this.title}">
+        <h3>${this.title}</h3>
+        <p class="prix">${this.price} CFA</p>
+        <div class="commandes">
+          <button class="btn-plus">+</button>
+          <span class="quantite">0</span>
+          <button class="btn-moins">-</button>
+        </div>
+      </article>
+    `;
   }
 }
+
+class ImageCardList {
+  constructor(container, products) {
+    this.container = container;
+    this.cards = products.map((p) => new ImageCard(p.id, p.nom, p.prix, p.url));
+  }
+
+  render() {
+    let html = "";
+    for (const card of this.cards) {
+      html += card.render();
+    }
+    this.container.innerHTML = html;
+  }
+}
+
+// --- Gestion du panier ---
+
+const catalogue = document.getElementById("catalogue");
+let quantites = JSON.parse(localStorage.getItem(CLE_STOCKAGE)) || {};
 
 function sauvegarderPanier() {
-  try {
-    localStorage.setItem(CLE_STOCKAGE, JSON.stringify(quantites));
-  } catch {
+  localStorage.setItem(CLE_STOCKAGE, JSON.stringify(quantites));
+}
+
+function modifierQuantite(id, changement) {
+  const actuelle = quantites[id] || 0;
+  const nouvelle = actuelle + changement;
+
+  if (nouvelle <= 0) {
+    delete quantites[id];
+  } else {
+    quantites[id] = nouvelle;
+  }
+
+  sauvegarderPanier();
+  mettreAJourAffichage();
+}
+
+function mettreAJourAffichage() {
+  const cartes = document.querySelectorAll(".carte");
+
+  for (const carte of cartes) {
+    const id = carte.dataset.id;
+    const qte = quantites[id] || 0;
+
+    const span = carte.querySelector(".quantite");
+    const btnMoins = carte.querySelector(".btn-moins");
+
+    span.textContent = qte;
+    span.hidden = qte === 0;
+    btnMoins.disabled = qte === 0;
   }
 }
+
+function activerBoutons() {
+  const cartes = document.querySelectorAll(".carte");
+
+  for (const carte of cartes) {
+    const id = carte.dataset.id;
+    const btnPlus = carte.querySelector(".btn-plus");
+    const btnMoins = carte.querySelector(".btn-moins");
+
+    btnPlus.addEventListener("click", () => modifierQuantite(id, 1));
+    btnMoins.addEventListener("click", () => modifierQuantite(id, -1));
+  }
+}
+
 
 async function chargerProduits() {
   try {
     const reponse = await fetch("pictures.json");
-    if (!reponse.ok) throw new Error("HTTP " + reponse.status);
-    produits = await reponse.json();
-    afficherCatalogue();
-    majCartes();
+    const produits = await reponse.json();
+
+    const liste = new ImageCardList(catalogue, produits);
+    liste.render();
+
+    activerBoutons();
+    mettreAJourAffichage();
   } catch (erreur) {
     catalogue.textContent = "Impossible de charger les images";
-    console.error(erreur);
   }
 }
 
-function formatPrix(valeur) {
-  return valeur + " CFA";
-}
-
-function creerCarte(produit) {
-  const carte = document.createElement("article");
-  carte.className = "carte";
-  carte.dataset.id = produit.id;
-
-  const img = document.createElement("img");
-  img.src = produit.url;
-  img.alt = produit.nom;
-  img.loading = "lazy";
-
-  const nom = document.createElement("p");
-  nom.className = "nom";
-  nom.textContent = produit.nom;
-
-  const prix = document.createElement("p");
-  prix.className = "prix";
-  prix.textContent = formatPrix(produit.prix);
-
-  const controles = document.createElement("div");
-  controles.className = "controles";
-
-  const plus = document.createElement("button");
-  plus.type = "button";
-  plus.textContent = "+";
-  plus.setAttribute("aria-label", "Ajouter " + produit.nom + " au panier");
-  plus.addEventListener("click", () => modifierQuantite(produit.id, 1));
-
-  const qte = document.createElement("span");
-  qte.className = "quantite";
-  qte.hidden = true;
-
-  const moins = document.createElement("button");
-  moins.type = "button";
-  moins.textContent = "-";
-  moins.setAttribute("aria-label", "Retirer " + produit.nom + " du panier");
-  moins.addEventListener("click", () => modifierQuantite(produit.id, -1));
-
-  controles.append(plus, qte, moins);
-  carte.append(img, nom, prix, controles);
-  return carte;
-}
-
-function afficherCatalogue() {
-  catalogue.replaceChildren(...produits.map(creerCarte));
-}
-
-
-function majCartes() {
-  catalogue.querySelectorAll(".carte").forEach(carte => {
-    const q = quantites[carte.dataset.id] || 0;
-    const span = carte.querySelector(".quantite");
-    span.textContent = q;
-    span.hidden = q === 0;
-    carte.querySelector("button:last-of-type").disabled = q === 0;
-  });
-}
-
 chargerProduits();
+
